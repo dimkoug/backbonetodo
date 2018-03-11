@@ -1,0 +1,134 @@
+{% load static from staticfiles %}
+<!DOCTYPE html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Todo Board</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="{% static 'bootstrap3/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'bootstrap3/css/ie10-viewport-bug-workaround.css' %}" rel="stylesheet">
+    <link href="{% static 'bootstrap3/css/jumbotron.css' %}" rel="stylesheet">
+    <link href="{% static 'bootstrap3/css/signin.css' %}" rel="stylesheet">
+    <link href="{% static 'bootstrap3/css/navbar-fixed-top.css' %}" rel="stylesheet">
+    <script src="{% static 'bootstrap3/js/ie-emulation-modes-warning.js' %}"></script>
+
+    <script type="text/html" id="header-template">
+      <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Todo Board Example</a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+              <% if (authenticated ) { %>
+                <li><a href="/" >Todo List</a></li>
+                <li><a href="#" class="logout">Logout</a></li>
+              <% } %>
+            </ul>
+          </div><!--/.navbar-collapse -->
+        </div>
+      </nav>
+    </script>
+
+    <script type="text/html" id="new-todo-template">
+      <form action="" method="post">
+        <label for="id_title">Todo</label>
+        <input id="id_title" type="text" name="title" maxlength="100" required />
+        <button class="cancel">Cancel</button>
+        <button type="submit">Create</button>
+      </form>
+    </script>
+
+    <script type="text/html" id="todo-template">
+      <% if (todo !== null) { %>
+        <% if (!todo.invalid) { %>
+          <h2><%- todo.get('title') %></h2>
+          <span class="due-date">Created <%- todo.get('created') %></span></br>
+          <button id="destroy" class="btn btn-danger pull-right" type="button">Delete</button></br>
+            <label for="id_title">Todo </label>
+            <input id="update_title" type="text" value="<%= todo.get('title') %>" name="title" maxlength="100" required />
+            <button id="update" type="button" class="btn btn-primary">Update</button>
+          <% } else { %>
+          <h1>Todo <%- todo.get('id') %> not found.</h1>
+        <% } %>
+      <% } else { %>
+        <h1 class="loading">Loading...</h1>
+      <% } %>
+    </script>
+
+    <script type="text/html" id="home-template">
+      <div class="row">
+        <h2 style="text-align:center;">Todo List</h2>
+      </div>
+      <div class="row">
+        <button class="add btn btn-primary pull-right" type="submit">Add Todo</button>
+      </div>
+      <% if (todos !== null) { %>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>id</th>
+              <th>Todo</th>
+              <th>Created</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% _.each(todos.models, function (todo) { %>
+                <tr>
+                  <td><%- todo.get('id') %> </td>
+                  <td><%- todo.get('title') %> </td>
+                  <td><%- todo.get('created') %> </td>
+                  <td><a href="#todo/<%- todo.get('id') %>" class="todo">View</a></td>
+                </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      <% } else { %>
+        <h3 class="loading">Loading...</h3>
+        <% } %>
+    </script>
+
+    <script type="text/html" id="login-template">
+      <form class="form-signin" action="" method="post">
+         <h2 class="form-signin-heading">Please sign in</h2>
+         <label for="id_username" class="sr-only">Username</label>
+         <input id="id_username" type="text" name="username" class="form-control" placeholder="Username" maxlength="30" required autofocus>
+         <input type="password" id="id_password" name="password" class="form-control" placeholder="Password" required>
+         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+      </form>
+    </script>
+  </head>
+
+  <body>
+    <div id="content" class="container"></div>
+
+    <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'js/underscore-min.js' %}"></script>
+    <script src="{% static 'js/backbone-min.js' %}"></script>
+
+    <script id="config" type="text/json">
+      {
+        "models": {},
+        "collections": {},
+        "views": {},
+        "router": null,
+        "apiRoot": "{% url 'api-root' %}",
+        "apiLogin": "{% url 'api-token' %}"
+      }
+    </script>
+    <script src="{% static 'todo/app.js' %}"></script>
+    <script src="{% static 'todo/models.js' %}"></script>
+    <script src="{% static 'todo/views.js' %}"></script>
+    <script src="{% static 'todo/router.js' %}"></script>
+  </body>
+</html>
